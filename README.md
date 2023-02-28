@@ -1,0 +1,28 @@
+# Plants sheet App
+
+This application is a google sheets to provide additional features
+for managing the sync inventory sheet for The Tree Center.
+
+## Features
+
+- Quickly create a filter view
+- Create a backup sheet to use before running campaigns
+- Restore a backup sheet to the main inventory
+
+## Installation
+
+XXX
+
+## Usage
+
+XXX
+
+## Feature Ideas 
+
+- [ ] Create a github action to deploy the script to google sheet
+
+## Notes
+
+This application is also used as a way to test how far we can
+get writing a full featured, polished google sheets app using
+ChatGPT and Github Copilot.
