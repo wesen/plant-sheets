@@ -12,6 +12,16 @@ function showSidebar() {
   html.setTitle("Products Helpers");
   html.setWidth(100);
   html.setHeight(50);
+
+  var hasActiveFilter = SpreadsheetApp.getActiveSheet().getFilter() !== null;
+  var clearFilterButton = '<button id="clear-filter" ' + (hasActiveFilter ? '' : 'disabled') + '>Clear Filter</button>';
+  html.append('<div>' + clearFilterButton + '</div>');
+  
+  var sidebar = SpreadsheetApp.getUi().showSidebar(html);
+  
+  var script = '<script>document.getElementById("clear-filter").addEventListener("click", function() { google.script.run.clearFilter(); });</script>';
+  html.append(script);
+
   SpreadsheetApp.getUi().showSidebar(html);
 }
 
@@ -19,22 +29,35 @@ function showQuickFilterDialog() {
   var template = HtmlService.createTemplateFromFile("quick-filter-dialog");
   var ui = SpreadsheetApp.getUi();
   var dialog = ui.showModalDialog(template.evaluate(), "Create Quick Filter");
+  return dialog;
+}
+
+function clearFilter() {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var filter = sheet.getFilter();
+  if (filter) {
+    filter.remove();
+  }
 }
 
 function createQuickFilter(column, text) {
+  Logger.log(
+    "Creating quick filter for column " + column + " with text " + text
+  );
   var sheet = SpreadsheetApp.getActiveSheet();
   var filterName = "Quick Filter " + column + " - " + text;
+
   var range = sheet.getDataRange();
   var filter = range.getFilter() || range.createFilter();
   var criteria = SpreadsheetApp.newFilterCriteria()
     .whenTextContains(text)
-    .build();
+
   var filterColumn = getColumnIndex(column);
   if (filterColumn >= 0) {
     filter.setColumnFilterCriteria(filterColumn, criteria);
-    filter.setTitle(filterName);
-    sheet.updateFilter(filter);
-    filter.apply();
+
+    Logger.log("Setting filter " + filterName);
+
     var ui = SpreadsheetApp.getUi();
     ui.alert(
       "Quick filter created",
